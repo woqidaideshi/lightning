@@ -28,6 +28,7 @@ from pytorch_lightning.cli import LightningCLI
 from pytorch_lightning.demos.mnist_datamodule import MNIST
 from pytorch_lightning.utilities import rank_zero_only
 from pytorch_lightning.utilities.imports import _TORCHVISION_AVAILABLE
+from pytorch_lightning.strategies import BaguaStrategy
 
 if _TORCHVISION_AVAILABLE:
     import torchvision
@@ -180,12 +181,15 @@ def cli_main():
         seed_everything_default=1234,
         save_config_overwrite=True,
         run=False,  # used to de-activate automatic fitting.
-        trainer_defaults={"callbacks": ImageSampler(), "max_epochs": 10},
+        trainer_defaults={"callbacks": ImageSampler(), "max_epochs": 2, "strategy": BaguaStrategy(algorithm="async")},
     )
     cli.trainer.fit(cli.model, datamodule=cli.datamodule)
-    cli.trainer.test(ckpt_path="best", datamodule=cli.datamodule)
-    predictions = cli.trainer.predict(ckpt_path="best", datamodule=cli.datamodule)
-    print(predictions[0])
+    '''
+    if torch.distributed.get_rank() == 0:
+        cli.trainer.test(ckpt_path="best", datamodule=cli.datamodule)
+        predictions = cli.trainer.predict(ckpt_path="best", datamodule=cli.datamodule)
+        print(predictions[0])
+    '''
 
 
 if __name__ == "__main__":
