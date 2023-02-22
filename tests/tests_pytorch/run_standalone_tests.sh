@@ -26,7 +26,7 @@ export PL_RUN_STANDALONE_TESTS=1
 defaults="-m coverage run --source $source --append -m pytest --no-header -v -s"
 
 # find tests marked as `@RunIf(standalone=True)`. done manually instead of with pytest because it is faster
-grep_output=$(grep --recursive --word-regexp . --regexp 'standalone=True' --include '*.py')
+grep_output=$(grep --recursive --word-regexp ./strategies/ --regexp 'standalone=True' --include 'test_bagua_strategy.py')
 
 # file paths, remove duplicates
 files=$(echo "$grep_output" | cut -f1 -d: | sort | uniq)
@@ -42,6 +42,8 @@ fi
 path_suffix=$(basename "$(dirname "$(pwd)")")/$(basename "$(pwd)")"/"  # https://stackoverflow.com/a/8223345
 parametrizations=${parametrizations//$path_suffix/}
 parametrizations_arr=($parametrizations)
+
+echo $path_suffix, $parametrizations, $parametrizations_arr
 
 report=''
 

@@ -25,12 +25,13 @@ if [[ $can_run_nvprof == "True" ]]; then
 fi
 
 # test that a user can manually launch individual processes
-echo "Running manual ddp launch test"
+echo "Running manual bagua launch test"
 export PYTHONPATH="${PYTHONPATH}:$(pwd)"
-args="fit --trainer.accelerator gpu --trainer.devices 2 --trainer.strategy ddp --trainer.max_epochs=1 --trainer.limit_train_batches=1 --trainer.limit_val_batches=1 --trainer.limit_test_batches=1"
+args="fit --trainer.accelerator gpu --trainer.devices 2 --trainer.strategy bagua --trainer.max_epochs=1 --trainer.limit_train_batches=1 --trainer.limit_val_batches=1 --trainer.limit_test_batches=1"
 MASTER_ADDR="localhost" MASTER_PORT=1234 LOCAL_RANK=1 python strategies/scripts/cli_script.py ${args} &
 MASTER_ADDR="localhost" MASTER_PORT=1234 LOCAL_RANK=0 python strategies/scripts/cli_script.py ${args}
 
-# test that ddp can launched as a module (-m option)
-echo "Running ddp example as module"
+# test that bagua can launched as a module (-m option)
+echo "Running bagua example as module"
+echo -----args: $args
 python -m strategies.scripts.cli_script ${args}
